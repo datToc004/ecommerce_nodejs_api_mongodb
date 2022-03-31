@@ -70,9 +70,14 @@ let getOrderByUserId = async (req, res) => {
 };
 
 let getAllOrder = async (req, res) => {
+    const { page, size } = req.pagination;
     try {
-        const orders = await Order.find();
-        res.status(200).json(orders);
+        const orders = await Order.find()
+            .limit(size)
+            .skip(page * size);
+        const count = await Order.count();
+        const totalPages = Math.ceil(count / size);
+        res.status(200).json({content:orders,page,totalPages});
     } catch (err) {
         res.status(500).json(err);
     }

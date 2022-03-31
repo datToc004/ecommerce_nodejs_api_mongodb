@@ -44,27 +44,36 @@ let showPr = async (req, res) => {
 let showAllPr = async (req, res) => {
     const qNew = req.query.new;
     const qCategory = req.query.category;
+    const { page, size } = req.pagination;
     try {
         let products;
 
         if (qNew) {
-            products = await Product.find().sort({ createdAt: -1 }).limit(1);
+            products = await Product.find()
+                .sort({ createdAt: -1 })
+                .limit(size)
+                .skip(page * size);
         } else if (qCategory) {
             products = await Product.find({
                 categories: {
                     $in: [qCategory],
                 },
-            });
+            })
+                .limit(size)
+                .skip(page * size);
         } else {
-            products = await Product.find();
+            products = await Product.find()
+                .limit(size)
+                .skip(page * size);
         }
+        const count = await Product.count();
+        const totalPages = Math.ceil(count/size);
 
-        res.status(200).json(products);
+        res.status(200).json({content:products,page,totalPages});
     } catch (err) {
         res.status(500).json(err);
     }
 };
-
 
 module.exports = {
     createPr: createPr,

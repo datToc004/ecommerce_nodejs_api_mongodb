@@ -41,14 +41,18 @@ let showUser = async (req, res) => {
     }
 };
 let showAllUser = async (req, res) => {
+    const { page, size } = req.pagination;
     try {
-        const users = await User.find();
-        res.status(200).json(users);
+        const users = await User.find()
+            .limit(size)
+            .skip(page * size);
+        const count = await User.count();
+        const totalPages = Math.ceil(count/size);
+        res.status(200).json({content:users,page,totalPages});
     } catch (err) {
         res.status(500).json(err);
     }
 };
-
 
 module.exports = {
     updateUser: updateUser,

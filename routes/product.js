@@ -3,6 +3,7 @@ const {
     verifyTokenAndAuthorization,
     verifyTokenAndAdmin,
 } = require("../middleware/verifyToken");
+const { pagination } = require("../middleware/pagination");
 
 const router = require("express").Router();
 const ProductController = require("../controller/ProductController");
@@ -20,6 +21,6 @@ router.delete("/:id", verifyTokenAndAdmin, ProductController.deletePr);
 
 router.get("/find/:id", ProductController.showPr);
 
-router.get("/all", ProductController.showAllPr);
+router.get("/all",pagination, ProductController.showAllPr);
 
 module.exports = router;
