@@ -1,8 +1,15 @@
 const User = require("../models/User");
 const cryptoJs = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const {body, checkSchema, validationResult} = require('express-validator');
 
 let register = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
+        });
+    }
     const newUser = new User({
         username: req.body.username,
         email: req.body.email,
@@ -20,6 +27,12 @@ let register = async (req, res) => {
 };
 
 let login = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
+        });
+    }
     try {
         const user = await User.findOne({
             email: req.body.email,
