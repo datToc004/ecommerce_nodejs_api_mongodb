@@ -37,8 +37,9 @@ let login = async (req, res) => {
         const user = await User.findOne({
             email: req.body.email,
         });
-
-        if (!user) res.status(401).json("Wrong User Name");
+        const a=req.t("Email.Email_wrong");
+        // if(req.t("Email_wrong")) a=req.t("Email_wrong");
+        if (!user) return res.status(401).json(a);
 
         const hashPassword = cryptoJs.AES.decrypt(
             user.password,
@@ -47,7 +48,7 @@ let login = async (req, res) => {
         const originalPassword = hashPassword.toString(cryptoJs.enc.Utf8);
         const inputPassword = req.body.password;
         if (originalPassword !== inputPassword)
-            res.status(401).json("Wrong Password");
+            return res.status(401).json(req.t('Password_wrong',{ns:'test1'})); 
 
         const accessToken = jwt.sign(
             {
@@ -58,7 +59,7 @@ let login = async (req, res) => {
             { expiresIn: "3d" }
         );
         const { password, ...others } = user._doc;
-        res.status(200).json({ ...others, accessToken });
+        return res.status(200).json({ ...others, accessToken });
     } catch (error) {
         res.status(500).json(error);
     }

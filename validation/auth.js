@@ -9,7 +9,7 @@ const loginSchema = {
             errorMessage: "email field cannot be empty",
         },
         isLength: {
-            options: { min: 0, max: 15 },
+            options: { min: 0 },
             errorMessage: "Username must be at least 6 characters long",
         },
     },
